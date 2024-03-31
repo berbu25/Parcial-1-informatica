@@ -8,12 +8,12 @@ int main() {
 
     // Bucle do-while para verificar que m sea impar
     do {
-        cout << "Ingrese la dimensión de la matriz (debe ser impar): ";
+        cout << "Ingrese la dimension de la matriz (debe ser impar): ";
         cin >> m;
     } while (m % 2 == 0);
 
     // Reservar memoria dinámica para la matriz
-    int *matriz = new int[m];
+    int **matriz = new int*[m]; //Se usa un puntero doble, por ser una matriz de dos dimensiones
     for (int i = 0; i < m; i++) {
         matriz[i] = new int[m];
     }
