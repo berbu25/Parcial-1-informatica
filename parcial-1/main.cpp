@@ -2,52 +2,35 @@
 
 using namespace std;
 
-void rotar_matriz(int **matriz, int m, int opcion) {
-    switch (opcion) {
-    case 1:
-        // Rotar 90 grados a la derecha
-        for (int i = 0; i < m / 2; i++) {
-            for (int j = i; j < m - i - 1; j++) {
-                // Intercambiar elementos
-                int temp = matriz[i][j];
-                matriz[i][j] = matriz[m - 1 - j][i];
-                matriz[m - 1 - j][i] = matriz[m - 1 - i][m - 1 - j];
-                matriz[m - 1 - i][m - 1 - j] = matriz[j][m - 1 - i];
-                matriz[j][m - 1 - i] = temp;
-            }
-        }
-        break;
-    case 2:
-        // Rotar 180 grados
-        for (int i = 0; i < m / 2; i++) {
-            for (int j = 0; j < m; j++) {
-                // Intercambiar elementos
-                int temp = matriz[i][j];
-                matriz[i][j] = matriz[m - 1 - i][m - 1 - j];
-                matriz[m - 1 - i][m - 1 - j] = temp;
-            }
-        }
-        break;
-    case 3:
-        // Rotar 90 grados a la izquierda
-        for (int i = 0; i < m / 2; i++) {
-            for (int j = i; j < m - i - 1; j++) {
-                // Intercambiar elementos
-                int temp = matriz[i][j];
-                matriz[i][j] = matriz[j][m - 1 - i];
-                matriz[j][m - 1 - i] = matriz[m - 1 - i][m - 1 - j];
-                matriz[m - 1 - i][m - 1 - j] = matriz[m - 1 - j][i];
-                matriz[m - 1 - j][i] = temp;
-            }
-        }
-        break;
-    default:
-        cout << "Opción no válida." << endl;
-        break;
+int** reservarMatriz(int m) {
+    int** matriz = new int*[m];
+    for (int i = 0; i < m; i++) {
+        matriz[i] = new int[m];
     }
+    return matriz;
+}
 
-    // Imprimir la matriz rotada
-    cout << "Matriz rotada:" << endl;
+void liberarMatriz(int** matriz, int m) {
+    for (int i = 0; i < m; i++) {
+        delete[] matriz[i];
+    }
+    delete[] matriz;
+}
+
+void generarMatriz(int** matriz, int m) {
+    int k = 1;
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < m; j++) {
+            if (i == m / 2 && j == m / 2) {
+                matriz[i][j] = 0;
+            } else {
+                matriz[i][j] = k++;
+            }
+        }
+    }
+}
+
+void imprimirMatriz(int** matriz, int m) {
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < m; j++) {
             cout << matriz[i][j] << " ";
@@ -56,49 +39,61 @@ void rotar_matriz(int **matriz, int m, int opcion) {
     }
 }
 
+void rotarMatriz(int** matriz, int m, int opcion) {
+    int** matrizRotada = reservarMatriz(m);
+    switch (opcion) {
+    case 1:
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < m; j++) {
+                matrizRotada[j][m - 1 - i] = matriz[i][j];
+            }
+        }
+        break;
+    case 2:
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < m; j++) {
+                matrizRotada[m - 1 - i][m - 1 - j] = matriz[i][j];
+            }
+        }
+        break;
+    case 3:
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < m; j++) {
+                matrizRotada[m - 1 - j][i] = matriz[i][j];
+            }
+        }
+        break;
+    default:
+        cout << "Opción no válida." << endl;
+        liberarMatriz(matrizRotada, m);
+        return;
+    }
+    imprimirMatriz(matrizRotada, m);
+    liberarMatriz(matrizRotada, m);
+}
 
 int main() {
-    // Dimensión de la matriz
     int m;
-
-    // Bucle do-while para verificar que m sea impar
     do {
-        cout << "Ingrese la dimension de la matriz (debe ser impar): ";
+        cout << "Ingrese la dimensión de la matriz (debe ser impar): ";
         cin >> m;
     } while (m % 2 == 0);
 
-    // Reservar memoria dinámica para la matriz
-    int **matriz = new int*[m]; //Se usa un puntero doble, por ser una matriz de dos dimensiones
-    for (int i = 0; i < m; i++) {
-        matriz[i] = new int[m];
+    int** matrizOriginal = reservarMatriz(m);
+    generarMatriz(matrizOriginal, m);
+    imprimirMatriz(matrizOriginal, m);
+
+    int opcion;
+    do {
+        cout << "¿Desea rotar la matriz? (1: 270 grados, 2: 180 grados, 3: 90 grados, 0: No rotar): ";
+        cin >> opcion;
+    } while (opcion < 0 || opcion > 3);
+
+    if (opcion != 0) {
+        rotarMatriz(matrizOriginal, m, opcion);
     }
 
-    // Llenar la matriz con números en orden
-    int k = 1;
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j < m; j++) {
-            if (i == m / 2 && j == m / 2) {
-                // Casilla central vacía
-                matriz[i][j] = 0;
-            } else {
-                matriz[i][j] = k++;
-            }
-        }
-    }
-
-    // Imprimir la matriz
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j < m; j++) {
-            cout << matriz[i][j] << " ";
-        }
-        cout << endl;
-    }
-
-    // Liberar memoria dinámica
-    for (int i = 0; i < m; i++) {
-        delete[] matriz[i];
-    }
-    delete[] matriz;
+    liberarMatriz(matrizOriginal, m);
 
     return 0;
 }
