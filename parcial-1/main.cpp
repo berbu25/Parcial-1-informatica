@@ -72,10 +72,51 @@ void rotarMatriz(int** matriz, int m, int opcion) {
     liberarMatriz(matrizRotada, m);
 }
 
+int generarcerradura(){  //esta funcion genera la cerradura a partir de la clave ingresada por el usuario
+
+    int* agregardato(int numerocondicion, int*arregloclave, int cont){
+        int*
+    }
+
+
+    int tamano, *clave, contador, condicion;
+    cout << "ingrese la clave: ";
+    int *clave = new int[tamano];
+
+    while(true){
+        cout << "Ingrese la condicion " << contador + 1;
+        cin >> condicion;
+        if(condicion == -3){
+            break;
+        }
+        if(contador == 0 || contador == 1){ // En las dos primeras iteraciones se ingresa la fila y la columna deben ser >0
+            if(condicion<1){
+                cout<<"La fila o la columna deben ser positivas";
+            }
+            else{
+                clave = agregardato(condicion,clave,contador);
+                contador++;
+            }
+        }
+        else{
+            if(condicion!=0 && condicion!=1 && condicion!=-1 && condicion!=-3){     //TENGO DUDA SI ACA ES && O SERIA ||
+                cout<<"Estas ingresando una opcion invalida, deber ingresar <0> <1> <-1> o <-3> ";
+            }
+            else{
+                if(condicion!=-3)
+            }
+        }
+    }
+
+
+
+}
+
 int main() {
     int m;
+
     do {
-        cout << "Ingrese la dimensión de la matriz (debe ser impar): ";
+        cout << "Ingrese la dimension de la matriz (debe ser impar): ";
         cin >> m;
     } while (m % 2 == 0);
 
