@@ -72,19 +72,28 @@ void rotarMatriz(int** matriz, int m, int opcion) {
     liberarMatriz(matrizRotada, m);
 }
 
+int* agregardato(int numerocondicion, int*arregloclave, int longitud){
+    int* nuevoarreglo = new int [longitud + 1];
+    for(int i = 0; i<=longitud;i++){
+        if(i<longitud){
+            nuevoarreglo[i]= arregloclave[i];
+        }
+        else{
+            nuevoarreglo[i]=numerocondicion;
+        }
+    }
+    delete[] arregloclave;
+    return nuevoarreglo;
+}
+
 int generarcerradura(){  //esta funcion genera la cerradura a partir de la clave ingresada por el usuario
 
-    int* agregardato(int numerocondicion, int*arregloclave, int cont){
-        int*
-    }
-
-
-    int tamano, *clave, contador, condicion;
-    cout << "ingrese la clave: ";
+    int tamano, contador = 0, condicion;
+    cout <<endl<< "Ingrese la clave: "<<endl;
     int *clave = new int[tamano];
 
     while(true){
-        cout << "Ingrese la condicion " << contador + 1;
+        cout << "Ingrese la condicion " << contador + 1 <<": ";
         cin >> condicion;
         if(condicion == -3){
             break;
@@ -103,14 +112,26 @@ int generarcerradura(){  //esta funcion genera la cerradura a partir de la clave
                 cout<<"Estas ingresando una opcion invalida, deber ingresar <0> <1> <-1> o <-3> ";
             }
             else{
-                if(condicion!=-3)
+                if(condicion!=-3){
+                    clave = agregardato(condicion,clave,contador);
+                    contador++;
+                }
+                else{
+                    if(contador<=2){
+                        cout<<"Minimo debese ingresar 3 condiciones (fila, columna, condicion1) ";
+                    }
+                    else{
+                        false;
+                    }
+                }
             }
         }
     }
-
-
+    tamano = contador;
+    return *clave;
 
 }
+
 
 int main() {
     int m;
@@ -135,6 +156,8 @@ int main() {
     }
 
     liberarMatriz(matrizOriginal, m);
+
+    generarcerradura();
 
     return 0;
 }
