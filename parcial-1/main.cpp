@@ -44,12 +44,34 @@ void imprimirMatriz(int** matriz, int m) {
 }
 
 // Función para rotar una matriz en 90 grados en el sentido de las agujas del reloj
-void rotarMatriz(int** matriz, int m) {
+void rotarMatriz(int** matriz, int m, int grados) {
     int** matrizRotada = reservarMatriz(m);
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j < m; j++) {
-            matrizRotada[j][m - 1 - i] = matriz[i][j];
+    switch (grados) {
+    case 1:
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < m; j++) {
+                matrizRotada[j][m - 1 - i] = matriz[i][j];
+            }
         }
+        break;
+    case 2:
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < m; j++) {
+                matrizRotada[m - 1 - i][m - 1 - j] = matriz[i][j];
+            }
+        }
+        break;
+    case 3:
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < m; j++) {
+                matrizRotada[m - 1 - j][i] = matriz[i][j];
+            }
+        }
+        break;
+    default:
+        cout << "Opción no válida." << endl;
+        liberarMatriz(matrizRotada, m);
+        return;
     }
     // Copiar la matriz rotada a la matriz original
     for (int i = 0; i < m; i++) {
@@ -86,68 +108,65 @@ void crearCerradura() {
         }
         if (contador == 0 || contador == 1) {
             if (condicion < 1) {
-                cout << "La fila o la columna deben ser positivas";
+                cout << "La fila o la columna deben ser positivas" << endl;
             } else {
                 clave = agregarDato(condicion, clave, contador);
                 contador++;
             }
         } else {
             if (condicion != 0 && condicion != 1 && condicion != -1 && condicion != -3) {
-                cout << "Estás ingresando una opción inválida. Debes ingresar <0>, <1>, <-1> o <-3>" << endl;
+                cout << "Debe ingresar <0> <1> <-1> o <-3>" << endl;
             } else {
                 if (condicion != -3) {
                     clave = agregarDato(condicion, clave, contador);
                     contador++;
                 } else {
                     if (contador <= 2) {
-                        cout << "Debes ingresar al menos 3 condiciones (fila, columna, condicion1)" << endl;
+                        cout << "Debe ingresar al menos 3 condiciones (fila, columna, condicion1)" << endl;
                     } else {
-                        break;
+                        false;
                     }
                 }
             }
         }
     }
 
-    // Determinar la dimensión de las matrices para la cerradura
-    int dimension;
-    if (clave[0] > clave[1]) {
-        dimension = clave[0];
-    } else {
-        dimension = clave[1];
-    }
+    // Calcular la dimensión de las matrices de la cerradura
+    int dimension = (clave[0] > clave[1]) ? clave[0] : clave[1];
     if (dimension % 2 == 0) {
-        dimension += 1; // Si la dimensión es par, agregar uno para que sea impar
+        dimension++;
     }
 
-    // Generar las matrices y alinearlas usando su elemento central 0
-    for (int c = contador - 1; c > 0; c--) {
-        int** matriz = reservarMatriz(dimension);
-        generarMatriz(matriz, dimension);
-        cout << "Matriz " << contador - c << ":" << endl;
-        imprimirMatriz(matriz, dimension);
-        rotarMatriz(matriz, dimension);
-        cout << endl;
-        liberarMatriz(matriz, dimension);
+    // Generar la matriz original y mostrarla
+    int** matrizOriginal = reservarMatriz(dimension);
+    generarMatriz(matrizOriginal, dimension);
+    cout << "Matriz original:" << endl;
+    imprimirMatriz(matrizOriginal, dimension);
+
+    // Crear y mostrar la cerradura
+    cout << "Cerradura:" << endl;
+    int** matrizCerradura = reservarMatriz(dimension);
+    for (int i = 0; i < contador - 1; i++) {
+        cout << "Matriz " << i + 1 << ":" << endl;
+        generarMatriz(matrizCerradura, dimension);
+        imprimirMatriz(matrizCerradura, dimension);
+        int opcion;
+        do {
+            cout << "¿Desea rotar la matriz " << i + 1 << "? (0: No rotar, 1: 90 grados, 2: 180 grados, 3: 270 grados): ";
+            cin >> opcion;
+        } while (opcion < 0 || opcion > 3);
+        if (opcion != 0) {
+            rotarMatriz(matrizCerradura, dimension, opcion);
+            cout << "Matriz " << i + 1 << " rotada " << opcion * 90 << " grados:" << endl;
+            imprimirMatriz(matrizCerradura, dimension);
+        }
     }
 
-    delete[] clave;
+    liberarMatriz(matrizOriginal, dimension);
+    liberarMatriz(matrizCerradura, dimension);
 }
 
 int main() {
-    int m;
-    do {
-        cout << "Ingrese la dimension de la matriz (debe ser impar): ";
-        cin >> m;
-    } while (m % 2 == 0);
-
-    int** matrizOriginal = reservarMatriz(m);
-    generarMatriz(matrizOriginal, m);
-    cout << "Matriz Original:" << endl;
-    imprimirMatriz(matrizOriginal, m);
-    liberarMatriz(matrizOriginal, m);
-
     crearCerradura();
-
     return 0;
 }
