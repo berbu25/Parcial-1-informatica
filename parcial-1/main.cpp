@@ -43,45 +43,6 @@ void imprimirMatriz(int** matriz, int m) {
     }
 }
 
-// Función para rotar una matriz en 90 grados en el sentido de las agujas del reloj
-void rotarMatriz(int** matriz, int m, int grados) {
-    int** matrizRotada = reservarMatriz(m);
-    switch (grados) {
-    case 1:
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < m; j++) {
-                matrizRotada[j][m - 1 - i] = matriz[i][j];
-            }
-        }
-        break;
-    case 2:
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < m; j++) {
-                matrizRotada[m - 1 - i][m - 1 - j] = matriz[i][j];
-            }
-        }
-        break;
-    case 3:
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < m; j++) {
-                matrizRotada[m - 1 - j][i] = matriz[i][j];
-            }
-        }
-        break;
-    default:
-        cout << "Opción no válida." << endl;
-        liberarMatriz(matrizRotada, m);
-        return;
-    }
-    // Copiar la matriz rotada a la matriz original
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j < m; j++) {
-            matriz[i][j] = matrizRotada[i][j];
-        }
-    }
-    liberarMatriz(matrizRotada, m);
-}
-
 // Función para agregar un dato al final de un arreglo
 int* agregarDato(int numero, int* arreglo, int longitud) {
     int* nuevoArreglo = new int[longitud + 1];
@@ -93,7 +54,7 @@ int* agregarDato(int numero, int* arreglo, int longitud) {
     return nuevoArreglo;
 }
 
-// Función para generar una "cerradura" de matrices a partir de una clave ingresada por el usuario
+// Función para crear una "cerradura" de matrices y comparar los valores según las condiciones definidas en la clave
 void crearCerradura() {
     int contador = 0, condicion;
     cout << "Ingrese la clave: (La condicion 1 es la fila y la condicion 2 es la columna)" << endl;
@@ -143,22 +104,26 @@ void crearCerradura() {
     cout << "Matriz original:" << endl;
     imprimirMatriz(matrizOriginal, dimension);
 
-    // Crear y mostrar la cerradura
+    // Crear la cerradura y comparar los valores según las condiciones de la clave
     cout << "Cerradura:" << endl;
     int** matrizCerradura = reservarMatriz(dimension);
     for (int i = 0; i < contador - 1; i++) {
-        cout << "Matriz " << i + 1 << ":" << endl;
-        generarMatriz(matrizCerradura, dimension);
-        imprimirMatriz(matrizCerradura, dimension);
-        int opcion;
-        do {
-            cout << "¿Desea rotar la matriz " << i + 1 << "? (0: No rotar, 1: 90 grados, 2: 180 grados, 3: 270 grados): ";
-            cin >> opcion;
-        } while (opcion < 0 || opcion > 3);
-        if (opcion != 0) {
-            rotarMatriz(matrizCerradura, dimension, opcion);
-            cout << "Matriz " << i + 1 << " rotada " << opcion * 90 << " grados:" << endl;
-            imprimirMatriz(matrizCerradura, dimension);
+        int fila = clave[0] - 1; // La fila indicada por la clave
+        int columna = clave[1] - 1; // La columna indicada por la clave
+        cout << "Matriz " << i + 1 << " en la posición (" << fila + 1 << ", " << columna + 1 << "):" << endl;
+        cout << "Valor: " << matrizOriginal[fila][columna] << endl;
+        // Imprimir valores de las matrices según las condiciones de la clave
+        for (int j = 2; j < contador; j += 2) {
+            int filaComp = clave[j] - 1; // La fila a comparar según la clave
+            int columnaComp = clave[j + 1] - 1; // La columna a comparar según la clave
+            cout << "Comparacion con la matriz " << (j / 2) + 1 << " en la posicion (" << filaComp + 1 << ", " << columnaComp + 1 << "): ";
+            if (matrizOriginal[fila][columna] > matrizOriginal[filaComp][columnaComp]) {
+                cout << "matriz1 > matriz" << (j / 2) + 1 << endl;
+            } else if (matrizOriginal[fila][columna] < matrizOriginal[filaComp][columnaComp]) {
+                cout << "matriz1 < matriz" << (j / 2) + 1 << endl;
+            } else {
+                cout << "matriz1 = matriz" << (j / 2) + 1 << endl;
+            }
         }
     }
 
