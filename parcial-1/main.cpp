@@ -162,6 +162,15 @@ void crearCerradura() {
         imprimirMatriz(matricesAdicionales[i], dimension);
     }
 
+    // Imprimir los valores en la posición de la clave en cada matriz rotada
+    cout << "\nValores en la posición dada por la clave en cada matriz rotada:" << endl;
+    for (int i = 0; i < contador - 1; ++i) {
+        int fila = clave[0] - 1; // Restamos 1 porque las filas y columnas se cuentan desde 1 en la clave
+        int columna = clave[1] - 1;
+        int valor = matricesAdicionales[i][fila][columna];
+        cout << "Matriz " << i + 1 << ": " << valor << endl;
+    }
+
     // Liberar memoria de las matrices adicionales
     for (int i = 0; i < contador - 1; ++i) {
         liberarMatriz(matricesAdicionales[i], dimension);
