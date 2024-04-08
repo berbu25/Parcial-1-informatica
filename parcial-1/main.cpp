@@ -135,37 +135,24 @@ void crearCerradura() {
     }
     cout << endl;
 
-    cout <<"\nCantidad de elementos en la clave: "<<contador<<endl<<endl;
+    cout <<"\nCantidad de elementos en la clave: "<<contador << endl;
 
-    // Crear matrices adicionales según la cantidad de elementos en la clave
-    int*** matricesAdicionales = new int**[contador - 1];
-    for (int i = 0; i < contador - 1; ++i) {
-        matricesAdicionales[i] = reservarMatriz(dimension);
-        int rotacion;
-        cout << "Ingrese la cantidad de grados de rotacion para la matriz " << i + 1 << " (0, 90, 180, 270): ";
-        cin >> rotacion;
-        generarMatriz(matricesAdicionales[i], dimension);
-        for (int r = 0; r < rotacion / 90; ++r) {
-            rotarMatriz(matricesAdicionales[i], dimension); // Rotar la matriz generada
-        }
-    }
-
-    // Imprimir las matrices adicionales
-    for (int i = 0; i < contador - 1; ++i) {
-        cout << "Matriz " << i + 1 << " generada a partir de la matriz base con rotacion:" << endl;
-        imprimirMatriz(matricesAdicionales[i], dimension);
-    }
+    // Generar la matriz 2 original (la que se va a rotar)
+    int** matriz2 = reservarMatriz(dimension);
+    generarMatriz(matriz2, dimension);
 
     // Realizar las comparaciones entre los valores en la posición dada por la clave en las matrices rotadas
     cout << "\nComparaciones entre los valores en la posición dada por la clave en las matrices rotadas:" << endl;
-    int matrizA = 0; // Índice de la primera matriz a comparar
-    int matrizB = 1; // Índice de la segunda matriz a comparar
-    for (int i = 2; i < contador; ++i) { // Comenzamos desde clave[2], ya que las primeras dos posiciones son para fila y columna
+    bool claveCumplida = false;
+
+    for (int i = 0; i < 4; ++i) {
         int fila = clave[0] - 1; // Restamos 1 porque las filas y columnas se cuentan desde 1 en la clave
         int columna = clave[1] - 1;
-        int valorA = matricesAdicionales[matrizA][fila][columna];
-        int valorB = matricesAdicionales[matrizB][fila][columna];
-        int condicionComparacion = clave[i]; // Condición de comparación
+        int valorA = matrizOriginal[fila][columna];
+        int valorB = matriz2[fila][columna];
+        int condicionComparacion = clave[2]; // La primera condición de comparación después de fila y columna
+
+        // Verificar si la clave se cumple en la posición dada
         bool resultadoComparacion = false;
         if (condicionComparacion == 1) {
             resultadoComparacion = (valorA > valorB);
@@ -174,24 +161,66 @@ void crearCerradura() {
         } else if (condicionComparacion == -1) {
             resultadoComparacion = (valorA < valorB);
         }
-        cout << "Comparación " << i - 1 << ": Matriz " << matrizA + 1 << " vs Matriz " << matrizB + 1 << ": " << (resultadoComparacion ? "Cumple" : "No cumple") << endl;
 
-        // Imprimir los valores en la posición dada por la clave en cada matriz rotada
-        cout << "Valor en la posición dada por la clave en la matriz " << matrizA + 1 << ": " << valorA << endl;
-        cout << "Valor en la posición dada por la clave en la matriz " << matrizB + 1 << ": " << valorB << endl;
+        if (resultadoComparacion) {
+            cout << "La restricción se cumplió en la comparación " << i + 1 << ": Matriz original vs Matriz 2 rotada " << (i * 90) << "°: Cumple" << endl;
+            claveCumplida = true;
+            break; // Si la clave se cumple, salir del bucle
+        }
 
-        // Actualizar índices de las matrices a comparar
-        matrizA++;
-        matrizB++;
+        // Rotar la matriz 2 para la próxima iteración
+        rotarMatriz(matriz2, dimension);
+
+        // Imprimir la matriz 2 rotada
+        if(((i + 1) * 90)<271){ //para que solo se imprima la rotacion hasta 270 por que se estaba haciendo hasta 360
+            cout << "Matriz 2 rotada " << ((i + 1) * 90) << "°:" << endl;
+            imprimirMatriz(matriz2, dimension);
+        }
     }
 
-    // Liberar memoria de las matrices adicionales
-    for (int i = 0; i < contador - 1; ++i) {
-        liberarMatriz(matricesAdicionales[i], dimension);
-    }
-    delete[] matricesAdicionales;
+    if (!claveCumplida) {
+        cout << "No se cumplió la clave en ninguna rotación de la matriz 2" << endl;
 
+        // Si la clave no se cumple en ninguna rotación de la matriz 2, intentar rotar la matriz 1
+        for (int i = 0; i < 4; ++i) {
+            // Rotar la matriz 1
+            rotarMatriz(matrizOriginal, dimension);
+
+            // Imprimir la matriz 1 rotada
+            cout << "Matriz 1 rotada " << ((i + 1) * 90) << "°:" << endl;
+            imprimirMatriz(matrizOriginal, dimension);
+
+            // Comparar la matriz 1 rotada con la matriz 2 rotada
+            int fila = clave[0] - 1;
+            int columna = clave[1] - 1;
+            int valorA = matrizOriginal[fila][columna];
+            int valorB = matriz2[fila][columna];
+            int condicionComparacion = clave[2];
+
+            bool resultadoComparacion = false;
+            if (condicionComparacion == 1) {
+                resultadoComparacion = (valorA > valorB);
+            } else if (condicionComparacion == 0) {
+                resultadoComparacion = (valorA == valorB);
+            } else if (condicionComparacion == -1) {
+                resultadoComparacion = (valorA < valorB);
+            }
+
+            if (resultadoComparacion) {
+                cout << "La restricción se cumplió en la comparación " << i + 1 << ": Matriz 1 rotada vs Matriz 2 rotada " << (i * 90) << "°: Cumple" << endl;
+                claveCumplida = true;
+                break; // Si la clave se cumple, salir del bucle
+            }
+        }
+    }
+
+    if (!claveCumplida) {
+        cout << "No se cumplió la clave en ninguna rotación" << endl;
+    }
+
+    // Liberar memoria de las matrices
     liberarMatriz(matrizOriginal, dimension);
+    liberarMatriz(matriz2, dimension);
 }
 
 int main() {
