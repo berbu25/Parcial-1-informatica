@@ -41,6 +41,7 @@ void imprimirMatriz(int** matriz, int m) {
         }
         cout << endl;
     }
+    cout << endl;
 }
 
 // Función para agregar un dato al final de un arreglo
@@ -98,37 +99,41 @@ void crearCerradura() {
         dimension++;
     }
 
-    // Generar la matriz original y mostrarla
+    // Generar la matriz original (con la que se trabaja la cerradura) y mostrarla
     int** matrizOriginal = reservarMatriz(dimension);
     generarMatriz(matrizOriginal, dimension);
-    cout << "Matriz original:" << endl;
+    cout << "\nMatriz base para esta clave:" << endl;
     imprimirMatriz(matrizOriginal, dimension);
 
-    // Crear la cerradura y comparar los valores según las condiciones de la clave
-    cout << "Cerradura:" << endl;
-    int** matrizCerradura = reservarMatriz(dimension);
-    for (int i = 0; i < contador - 1; i++) {
-        int fila = clave[0] - 1; // La fila indicada por la clave
-        int columna = clave[1] - 1; // La columna indicada por la clave
-        cout << "Matriz " << i + 1 << " en la posición (" << fila + 1 << ", " << columna + 1 << "):" << endl;
-        cout << "Valor: " << matrizOriginal[fila][columna] << endl;
-        // Imprimir valores de las matrices según las condiciones de la clave
-        for (int j = 2; j < contador; j += 2) {
-            int filaComp = clave[j] - 1; // La fila a comparar según la clave
-            int columnaComp = clave[j + 1] - 1; // La columna a comparar según la clave
-            cout << "Comparacion con la matriz " << (j / 2) + 1 << " en la posicion (" << filaComp + 1 << ", " << columnaComp + 1 << "): ";
-            if (matrizOriginal[fila][columna] > matrizOriginal[filaComp][columnaComp]) {
-                cout << "matriz1 > matriz" << (j / 2) + 1 << endl;
-            } else if (matrizOriginal[fila][columna] < matrizOriginal[filaComp][columnaComp]) {
-                cout << "matriz1 < matriz" << (j / 2) + 1 << endl;
-            } else {
-                cout << "matriz1 = matriz" << (j / 2) + 1 << endl;
-            }
-        }
+    // Imprimir todos los elementos del arreglo clave, incluyendo -3
+    cout << "Elementos del arreglo clave:" << endl;
+    for (int i = 0; i < contador; ++i) {
+        cout << clave[i] << " ";
+    }
+    cout << endl;
+
+    cout <<"\nCantidad de elementos en la clave: "<<contador<<endl<<endl;
+
+    // Crear matrices adicionales según la cantidad de elementos en la clave
+    int*** matricesAdicionales = new int**[contador - 1];
+    for (int i = 0; i < contador - 1; ++i) {
+        matricesAdicionales[i] = reservarMatriz(dimension);
+        generarMatriz(matricesAdicionales[i], dimension);
     }
 
+    // Imprimir las matrices adicionales
+    for (int i = 0; i < contador - 1; ++i) {
+        cout << "Matriz " << i + 1 << " generada a partir de la matriz base:" << endl;
+        imprimirMatriz(matricesAdicionales[i], dimension);
+    }
+
+    // Liberar memoria de las matrices adicionales
+    for (int i = 0; i < contador - 1; ++i) {
+        liberarMatriz(matricesAdicionales[i], dimension);
+    }
+    delete[] matricesAdicionales;
+
     liberarMatriz(matrizOriginal, dimension);
-    liberarMatriz(matrizCerradura, dimension);
 }
 
 int main() {
