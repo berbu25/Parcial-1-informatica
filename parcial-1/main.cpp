@@ -20,49 +20,40 @@ void liberarMatriz(int** matriz, int m) {
 }
 
 // Función para generar una matriz con números ascendentes, con el centro en 0
-void generarMatriz(int** matriz, int m, int rotacion) {
+void generarMatriz(int** matriz, int m) {
     int k = 1;
-    if (rotacion == 0) {
-        for (int i = 0; i < m; i++) {
-            for (int j = 0; j < m; j++) {
-                if (i == m / 2 && j == m / 2) {
-                    matriz[i][j] = 0;
-                } else {
-                    matriz[i][j] = k++;
-                }
-            }
-        }
-    } else if (rotacion == 90) {
-        for (int j = m - 1; j >= 0; j--) {
-            for (int i = 0; i < m; i++) {
-                if (i == m / 2 && j == m / 2) {
-                    matriz[i][j] = 0;
-                } else {
-                    matriz[i][j] = k++;
-                }
-            }
-        }
-    } else if (rotacion == 180) {
-        for (int i = m - 1; i >= 0; i--) {
-            for (int j = m - 1; j >= 0; j--) {
-                if (i == m / 2 && j == m / 2) {
-                    matriz[i][j] = 0;
-                } else {
-                    matriz[i][j] = k++;
-                }
-            }
-        }
-    } else if (rotacion == 270) {
+    for (int i = 0; i < m; i++) {
         for (int j = 0; j < m; j++) {
-            for (int i = m - 1; i >= 0; i--) {
-                if (i == m / 2 && j == m / 2) {
-                    matriz[i][j] = 0;
-                } else {
-                    matriz[i][j] = k++;
-                }
+            if (i == m / 2 && j == m / 2) {
+                matriz[i][j] = 0;
+            } else {
+                matriz[i][j] = k++;
             }
         }
     }
+}
+
+// Función para rotar una matriz en 90 grados en sentido horario
+void rotarMatriz(int** matriz, int m) {
+    // Crear una matriz temporal para almacenar la matriz rotada
+    int** matrizRotada = reservarMatriz(m);
+
+    // Realizar la rotación
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < m; j++) {
+            matrizRotada[j][m - 1 - i] = matriz[i][j];
+        }
+    }
+
+    // Copiar la matriz rotada de vuelta a la matriz original
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < m; j++) {
+            matriz[i][j] = matrizRotada[i][j];
+        }
+    }
+
+    // Liberar la memoria de la matriz temporal
+    liberarMatriz(matrizRotada, m);
 }
 
 // Función para imprimir una matriz
@@ -133,7 +124,7 @@ void crearCerradura() {
 
     // Generar la matriz original (con la que se trabaja la cerradura) y mostrarla
     int** matrizOriginal = reservarMatriz(dimension);
-    generarMatriz(matrizOriginal, dimension, 0);
+    generarMatriz(matrizOriginal, dimension);
     cout << "\nMatriz base para esta clave:" << endl;
     imprimirMatriz(matrizOriginal, dimension);
 
@@ -153,7 +144,10 @@ void crearCerradura() {
         int rotacion;
         cout << "Ingrese la cantidad de grados de rotacion para la matriz " << i + 1 << " (0, 90, 180, 270): ";
         cin >> rotacion;
-        generarMatriz(matricesAdicionales[i], dimension, rotacion);
+        generarMatriz(matricesAdicionales[i], dimension);
+        for (int r = 0; r < rotacion / 90; ++r) {
+            rotarMatriz(matricesAdicionales[i], dimension); // Rotar la matriz generada
+        }
     }
 
     // Imprimir las matrices adicionales
