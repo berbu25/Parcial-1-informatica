@@ -20,14 +20,46 @@ void liberarMatriz(int** matriz, int m) {
 }
 
 // Función para generar una matriz con números ascendentes, con el centro en 0
-void generarMatriz(int** matriz, int m) {
+void generarMatriz(int** matriz, int m, int rotacion) {
     int k = 1;
-    for (int i = 0; i < m; i++) {
+    if (rotacion == 0) {
+        for (int i = 0; i < m; i++) {
+            for (int j = 0; j < m; j++) {
+                if (i == m / 2 && j == m / 2) {
+                    matriz[i][j] = 0;
+                } else {
+                    matriz[i][j] = k++;
+                }
+            }
+        }
+    } else if (rotacion == 90) {
+        for (int j = m - 1; j >= 0; j--) {
+            for (int i = 0; i < m; i++) {
+                if (i == m / 2 && j == m / 2) {
+                    matriz[i][j] = 0;
+                } else {
+                    matriz[i][j] = k++;
+                }
+            }
+        }
+    } else if (rotacion == 180) {
+        for (int i = m - 1; i >= 0; i--) {
+            for (int j = m - 1; j >= 0; j--) {
+                if (i == m / 2 && j == m / 2) {
+                    matriz[i][j] = 0;
+                } else {
+                    matriz[i][j] = k++;
+                }
+            }
+        }
+    } else if (rotacion == 270) {
         for (int j = 0; j < m; j++) {
-            if (i == m / 2 && j == m / 2) {
-                matriz[i][j] = 0;
-            } else {
-                matriz[i][j] = k++;
+            for (int i = m - 1; i >= 0; i--) {
+                if (i == m / 2 && j == m / 2) {
+                    matriz[i][j] = 0;
+                } else {
+                    matriz[i][j] = k++;
+                }
             }
         }
     }
@@ -101,7 +133,7 @@ void crearCerradura() {
 
     // Generar la matriz original (con la que se trabaja la cerradura) y mostrarla
     int** matrizOriginal = reservarMatriz(dimension);
-    generarMatriz(matrizOriginal, dimension);
+    generarMatriz(matrizOriginal, dimension, 0);
     cout << "\nMatriz base para esta clave:" << endl;
     imprimirMatriz(matrizOriginal, dimension);
 
@@ -118,12 +150,15 @@ void crearCerradura() {
     int*** matricesAdicionales = new int**[contador - 1];
     for (int i = 0; i < contador - 1; ++i) {
         matricesAdicionales[i] = reservarMatriz(dimension);
-        generarMatriz(matricesAdicionales[i], dimension);
+        int rotacion;
+        cout << "Ingrese la cantidad de grados de rotacion para la matriz " << i + 1 << " (0, 90, 180, 270): ";
+        cin >> rotacion;
+        generarMatriz(matricesAdicionales[i], dimension, rotacion);
     }
 
     // Imprimir las matrices adicionales
     for (int i = 0; i < contador - 1; ++i) {
-        cout << "Matriz " << i + 1 << " generada a partir de la matriz base:" << endl;
+        cout << "Matriz " << i + 1 << " generada a partir de la matriz base con rotacion:" << endl;
         imprimirMatriz(matricesAdicionales[i], dimension);
     }
 
