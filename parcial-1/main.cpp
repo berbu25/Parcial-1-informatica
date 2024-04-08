@@ -162,13 +162,33 @@ void crearCerradura() {
         imprimirMatriz(matricesAdicionales[i], dimension);
     }
 
-    // Imprimir los valores en la posición de la clave en cada matriz rotada
-    cout << "\nValores en la posición dada por la clave en cada matriz rotada:" << endl;
-    for (int i = 0; i < contador - 1; ++i) {
+    // Realizar las comparaciones entre los valores en la posición dada por la clave en las matrices rotadas
+    cout << "\nComparaciones entre los valores en la posición dada por la clave en las matrices rotadas:" << endl;
+    int matrizA = 0; // Índice de la primera matriz a comparar
+    int matrizB = 1; // Índice de la segunda matriz a comparar
+    for (int i = 2; i < contador; ++i) { // Comenzamos desde clave[2], ya que las primeras dos posiciones son para fila y columna
         int fila = clave[0] - 1; // Restamos 1 porque las filas y columnas se cuentan desde 1 en la clave
         int columna = clave[1] - 1;
-        int valor = matricesAdicionales[i][fila][columna];
-        cout << "Matriz " << i + 1 << ": " << valor << endl;
+        int valorA = matricesAdicionales[matrizA][fila][columna];
+        int valorB = matricesAdicionales[matrizB][fila][columna];
+        int condicionComparacion = clave[i]; // Condición de comparación
+        bool resultadoComparacion = false;
+        if (condicionComparacion == 1) {
+            resultadoComparacion = (valorA > valorB);
+        } else if (condicionComparacion == 0) {
+            resultadoComparacion = (valorA == valorB);
+        } else if (condicionComparacion == -1) {
+            resultadoComparacion = (valorA < valorB);
+        }
+        cout << "Comparación " << i - 1 << ": Matriz " << matrizA + 1 << " vs Matriz " << matrizB + 1 << ": " << (resultadoComparacion ? "Cumple" : "No cumple") << endl;
+
+        // Imprimir los valores en la posición dada por la clave en cada matriz rotada
+        cout << "Valor en la posición dada por la clave en la matriz " << matrizA + 1 << ": " << valorA << endl;
+        cout << "Valor en la posición dada por la clave en la matriz " << matrizB + 1 << ": " << valorB << endl;
+
+        // Actualizar índices de las matrices a comparar
+        matrizA++;
+        matrizB++;
     }
 
     // Liberar memoria de las matrices adicionales
